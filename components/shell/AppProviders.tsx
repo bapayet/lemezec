@@ -4,6 +4,7 @@ import { WifiOff } from "lucide-react";
 import { db, getMeta } from "@/lib/db";
 import { flushOutbox } from "@/lib/outbox";
 import { syncWords } from "@/lib/words/sync";
+import { ensureAnonymousSession } from "@/lib/supabase/browser";
 import { ToastProvider } from "@/components/ui/Toast";
 
 const SYNC_EVERY_MS = 60 * 60 * 1000;
@@ -35,6 +36,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
 async function background() {
   if (!navigator.onLine) return;
+  // session anonyme (si Supabase est configuré) avant tout appel : les routes en ont besoin
+  await ensureAnonymousSession().catch(() => {});
   const last = await getMeta<string>("lastSyncAt");
   const empty = (await db.words.count()) === 0;
   if (empty || !last || Date.now() - Date.parse(last) > SYNC_EVERY_MS) {

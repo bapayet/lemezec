@@ -10,6 +10,7 @@ import { SectionLabel } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/Toast";
 import { db, getMeta } from "@/lib/db";
 import { clearWordCache, syncWords } from "@/lib/words/sync";
+import { browserSupabase } from "@/lib/supabase/browser";
 
 function ago(iso?: string) {
   if (!iso) return "jamais synchronisé";
@@ -44,6 +45,9 @@ export default function SettingsPage() {
   }
 
   async function eraseAll() {
+    // côté serveur d'abord (session anonyme + ses évaluations), tant que la session existe encore
+    if (online) await fetch("/api/me", { method: "DELETE" }).catch(() => {});
+    await browserSupabase()?.auth.signOut().catch(() => {});
     await db.delete();
     // la base se recrée au rechargement, puis la synchro remet les mots
     location.assign("/");

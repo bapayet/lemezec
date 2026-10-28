@@ -6,27 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:rls": "node scripts/test-rls.mjs",
+    "test:units": "tsx --conditions=react-server scripts/test-units.ts",
+    "test": "npm run test:units && npm run test:rls",
+    "db:import": "node --env-file=.env.local scripts/import-words.mjs",
+    "db:import:dry": "node scripts/import-words.mjs --dry-run",
+    "seed": "node scripts/build-seed.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.50.0",
     "dexie": "^4.0.11",
     "dexie-react-hooks": "^1.1.7",
     "lucide-react": "^0.460.0",
     "next": "^15.5.28",
+    "papaparse": "^5.5.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.2.17",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^20",
+    "@types/papaparse": "^5.3.15",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "eslint": "^9",
     "eslint-config-next": "^15.5.28",
     "postcss": "^8",
     "tailwindcss": "^4.1.11",
+    "tsx": "^4.19.3",
     "typescript": "^5"
   }
 }
