@@ -15,7 +15,7 @@ const ok = (cond, label) => { console.log(`${cond ? "  ok  " : "  FAIL"} ${label
 await db.exec(`
   create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
   create schema auth;
-  create table auth.users (id uuid primary key, is_anonymous boolean not null default false);
+  create table auth.users (id uuid primary key, is_anonymous boolean not null default false, invited_at timestamptz, email text);
   create function auth.uid() returns uuid language sql stable as $$
     select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
   grant usage on schema auth to anon, authenticated, service_role;
@@ -34,7 +34,7 @@ const A = "aaaaaaaa-0000-4000-8000-000000000001"; // session anonyme d'un appare
 const B = "bbbbbbbb-0000-4000-8000-000000000002"; // deuxième appareil
 const ADMIN = "adadadad-0000-4000-8000-000000000003";
 await db.exec(`
-  insert into auth.users values ('${A}', true), ('${B}', true), ('${ADMIN}', false);
+  insert into auth.users (id, is_anonymous, invited_at) values ('${A}', true, null), ('${B}', true, null), ('${ADMIN}', false, now());
   insert into admins values ('${ADMIN}');
   insert into words (id, word, definition, difficulty, source, status) values
     ('11111111-0000-4000-8000-000000000001', 'bibliopole', 'Marchand de livres.', 'difficile', 'legacy', 'active'),
@@ -112,6 +112,14 @@ r = await as("authenticated", A, "select recompute_difficulty()");
 ok(Boolean(r.error), "recompute_difficulty() réservé au rôle service");
 r = await as("service_role", null, "select recompute_difficulty() n");
 ok(!r.error, "le cron (rôle service) recalcule la difficulté");
+
+console.log("Création de comptes (garde anti-inscription)");
+let e = await db.query("insert into auth.users (id, is_anonymous) values (gen_random_uuid(), true)").then(() => null, (x) => x.message);
+ok(e === null, "une session anonyme peut être créée");
+e = await db.query("insert into auth.users (id, is_anonymous, invited_at, email) values (gen_random_uuid(), false, now(), 'invite@exemple.fr')").then(() => null, (x) => x.message);
+ok(e === null, "un compte invité depuis le tableau de bord peut être créé");
+e = await db.query("insert into auth.users (id, is_anonymous, email) values (gen_random_uuid(), false, 'intrus@exemple.fr')").then(() => null, (x) => x.message);
+ok(Boolean(e) && e.includes("Inscription fermée"), "une inscription par e-mail est refusée");
 
 console.log("Suppression de compte");
 await db.exec(`delete from auth.users where id = '${B}'`);
