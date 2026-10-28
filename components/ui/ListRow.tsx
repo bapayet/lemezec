@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -33,20 +33,27 @@ export function ListRowLink({ href, icon, hint, children }: { href: string; icon
   );
 }
 
-export function ListRowButton({
-  icon, hint, tone = "default", disabled, onClick, children,
-}: { icon?: ReactNode; hint?: ReactNode; tone?: Tone; disabled?: boolean; onClick?: () => void; children: ReactNode }) {
+type RowButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & {
+  icon?: ReactNode; hint?: ReactNode; tone?: Tone; children: ReactNode;
+};
+
+// forwardRef + props transmises : la ligne peut servir directement de déclencheur Radix (asChild)
+export const ListRowButton = forwardRef<HTMLButtonElement, RowButtonProps>(function ListRowButton(
+  { icon, hint, tone = "default", disabled, onClick, children, className, ...rest }, ref,
+) {
   return (
     <button
+      ref={ref}
       type="button"
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled || undefined}
-      className={cn(base, toneClass[tone], disabled ? "cursor-not-allowed" : "hover:bg-surface-muted")}
+      className={cn(base, toneClass[tone], disabled ? "cursor-not-allowed" : "hover:bg-surface-muted", className)}
+      {...rest}
     >
       <Inner icon={icon} hint={hint}>{children}</Inner>
     </button>
   );
-}
+});
 
 export function ListRowInfo({ icon, hint, children }: { icon?: ReactNode; hint?: ReactNode; children: ReactNode }) {
   return (
