@@ -12,7 +12,8 @@
     "test": "npm run test:units && npm run test:rls",
     "db:import": "node --env-file=.env.local scripts/import-words.mjs",
     "db:import:dry": "node scripts/import-words.mjs --dry-run",
-    "seed": "node scripts/build-seed.mjs"
+    "seed": "node scripts/build-seed.mjs",
+    "db:check": "node --env-file=.env.local scripts/check-supabase.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
