@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState, Skeleton } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/Toast";
 import { db } from "@/lib/db";
+import { flushOutbox } from "@/lib/outbox";
 import { readerFor, scoreboard } from "@/lib/game/logic";
 import { completeRound, currentGame, endGame, removeCurrentWord, reveal, toggleFinder, undoRemoveWord } from "@/lib/game/store";
 import type { Rating } from "@/lib/types";
@@ -59,11 +60,15 @@ export default function GamePage() {
   async function next(rating: Rating | null) {
     setBusy(true);
     try { await completeRound(game!, rating); } finally { setBusy(false); }
+    // envoi en arrière-plan ; hors ligne, la file attend la prochaine occasion
+    if (rating) void flushOutbox();
   }
 
   async function removeWord() {
     const removed = await removeCurrentWord(game!);
     toast.show({ message: "Mot retiré de vos parties.", action: { label: "Annuler", run: () => void undoRemoveWord(game!.id, removed) } });
+    // le signalement part après le délai d'annulation, pour ne pas signaler un mot aussitôt remis
+    setTimeout(() => void flushOutbox(), 6000);
   }
 
   return (
