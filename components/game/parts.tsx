@@ -24,7 +24,8 @@ export function WordCard({ word, revealed, onReveal }: { word: Word; revealed: b
               </ul>
             )}
             <p lang="fr" className="text-base">{word.definition}</p>
-            <p className="text-xs text-text-subtle">Définition : Wiktionnaire, CC BY-SA</p>
+            {/* text-subtle sur surface-muted = 4,3:1 (BUG-003) */}
+            <p className="text-xs text-text-muted">Définition : Wiktionnaire, CC BY-SA</p>
           </div>
         ) : (
           <button

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLiveQuery } from "dexie-react-hooks";
 import { CircleAlert, Play, Plus } from "lucide-react";
@@ -55,10 +56,13 @@ export default function SetupPage() {
     setLevels((l) => (l.includes(level) ? l.filter((x) => x !== level) : [...l, level]));
   }
 
+  // aucun mot du tout sur l'appareil : c'est la vraie raison, avant toute autre (BUG-002)
+  const noWords = wordCount === 0;
   const blocker =
+    noWords ? "Aucun mot sur cet appareil." :
     players.length < 2 ? "Il faut au moins deux joueurs." :
     !levels.length ? "Choisissez au moins un niveau." :
-    counts && available === 0 ? "Aucun mot pour ces niveaux : synchronisez la base dans Réglages." : null;
+    counts && available === 0 ? "Aucun mot pour ces niveaux." : null;
 
   async function start() {
     setStarting(true);
@@ -148,6 +152,9 @@ export default function SetupPage() {
           </Button>
           <p id="setup-blocker" className="min-h-5 text-center text-sm text-text-muted">
             {blocker ?? `${available.toLocaleString("fr-FR")} mots dans la pioche`}
+            {noWords && (
+              <> <Link href="/settings" className="font-semibold text-accent underline underline-offset-2">Mettre à jour les mots</Link></>
+            )}
           </p>
         </div>
       </div>

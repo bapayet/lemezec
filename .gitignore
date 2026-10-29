@@ -42,3 +42,8 @@ next-env.d.ts
 
 # modèle des variables, sans valeurs
 !.env.example
+
+# tests e2e
+/.next-e2e/
+/e2e-report/
+/test-results/

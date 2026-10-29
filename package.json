@@ -13,7 +13,8 @@
     "db:import": "node --env-file=.env.local scripts/import-words.mjs",
     "db:import:dry": "node scripts/import-words.mjs --dry-run",
     "seed": "node scripts/build-seed.mjs",
-    "db:check": "node --env-file=.env.local scripts/check-supabase.mjs"
+    "db:check": "node --env-file=.env.local scripts/check-supabase.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
@@ -30,8 +31,10 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
     "@electric-sql/pglite": "^0.2.17",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^20",
     "@types/papaparse": "^5.3.15",

@@ -27,7 +27,8 @@ export function DifficultyTile({
     >
       <span aria-hidden className={cn("size-7 rounded-pill", difficultyDot[level])} />
       {DIFFICULTY_LABEL[level]}
-      <span className="text-xs font-medium text-text-subtle">
+      {/* sur fond accent-soft, text-subtle tombe à 4,3:1 (BUG-001) : text-muted une fois sélectionnée */}
+      <span className={cn("text-xs font-medium", pressed ? "text-text-muted" : "text-text-subtle")}>
         {count === undefined ? " " : count === 0 ? "aucun mot" : `${count.toLocaleString("fr-FR")} mots`}
       </span>
       {pressed && <Check aria-hidden className="absolute right-2 top-2 size-5 text-accent" />}
