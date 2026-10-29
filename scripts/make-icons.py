@@ -49,4 +49,23 @@ draw(512, safe=0.62, rounded=False).save(os.path.join(root, "public", "icons", "
 # iOS : opaque, sans coins arrondis (iOS les arrondit lui-même)
 draw(180, safe=0.8, rounded=False).convert("RGB").save(os.path.join(root, "app", "apple-icon.png"))
 draw(64).save(os.path.join(root, "app", "icon.png"))
-print("icônes écrites")
+
+# image de partage (1200×630) : dégradé, icône, nom, accroche. Police Aileron fournie par Pillow (domaine public).
+from PIL import ImageFont
+W, H = 1200, 630
+og = Image.new("RGB", (W, H))
+p = og.load()
+a, b = rgb(c1), rgb(c2)
+for y in range(H):
+    for x in range(W):
+        t = (x / W + y / H) / 2
+        p[x, y] = tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
+logo = draw(260)
+og.paste(logo, (110, (H - 260) // 2), logo)
+d = ImageDraw.Draw(og)
+d.text((420, 190), "Lemezec", font=ImageFont.load_default(size=118), fill=white)
+d.text((424, 340), "Le jeu des mots rares", font=ImageFont.load_default(size=46), fill=white)
+# la police intégrée n'a pas les lettres accentuées : texte choisi sans accent
+d.text((424, 404), "Devinez le sens. Un seul smartphone pour tous.", font=ImageFont.load_default(size=34), fill=rgb(tokens["color"]["on-gradient-muted"]))
+og.save(os.path.join(root, "app", "opengraph-image.png"))
+print("icônes et image de partage écrites")

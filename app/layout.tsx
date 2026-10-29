@@ -1,22 +1,34 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { AppProviders } from "@/components/shell/AppProviders";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
+// adresse publique : fixée par NEXT_PUBLIC_SITE_URL, sinon l'URL de production fournie par Vercel
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
+const description = "Des mots oubliés, des définitions à deviner, un seul téléphone pour toute la tablée.";
+
 export const metadata: Metadata = {
-  title: { default: "Lemezec", template: "%s · Lemezec" },
-  description: "Le jeu des mots rares, à plusieurs sur un seul téléphone.",
+  metadataBase: new URL(siteUrl),
+  title: { default: "Lemezec, le jeu des mots rares", template: "%s · Lemezec" },
+  description,
   applicationName: "Lemezec",
   appleWebApp: { capable: true, title: "Lemezec", statusBarStyle: "default" },
+  openGraph: { type: "website", locale: "fr_FR", siteName: "Lemezec", title: "Lemezec, le jeu des mots rares", description },
+  twitter: { card: "summary_large_image", title: "Lemezec, le jeu des mots rares", description },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#5a67d8",
+  themeColor: "#5a67d8", // token gradient-from (une balise meta ne lit pas les variables CSS)
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Aller au contenu
         </a>
         <AppProviders>{children}</AppProviders>
+        {/* mesure d'audience sans cookie. Son script n'existe que sur Vercel (et une fois Web Analytics activé
+            dans le tableau de bord) : ailleurs, il produirait une 404 à chaque page */}
+        {process.env.VERCEL === "1" && <Analytics />}
       </body>
     </html>
   );

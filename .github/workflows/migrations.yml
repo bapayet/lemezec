@@ -1,0 +1,33 @@
+# Applique les nouvelles migrations à la base de production quand elles arrivent sur main.
+# Secret requis (Settings → Secrets and variables → Actions) : SUPABASE_DB_URL
+# = chaîne de connexion « Session pooler » du projet (Supabase → Connect), mot de passe compris.
+name: Migrations Supabase
+
+on:
+  push:
+    branches: [main]
+    paths: ["supabase/migrations/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: migrations
+  cancel-in-progress: false
+
+jobs:
+  appliquer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      - name: Migrations en attente
+        run: supabase migration list --db-url "$SUPABASE_DB_URL"
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      - name: Appliquer
+        run: supabase db push --db-url "$SUPABASE_DB_URL"
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

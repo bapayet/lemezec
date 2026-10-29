@@ -65,3 +65,11 @@ test.describe("API : entrées refusées", () => {
     expect(r.headers().location).toMatch(/\/admin\/login\?erreur=lien$/);
   });
 });
+
+test.describe("Surveillance", () => {
+  test("H1 /api/health répond (mode local) sans aucune donnée de joueur", async ({ request }) => {
+    const r = await request.get("/api/health");
+    expect(r.status()).toBe(200);
+    expect(await r.json()).toEqual({ ok: true, mode: "local" });
+  });
+});

@@ -7,7 +7,7 @@ const revision = randomUUID();
 
 // pages de l'app, toutes statiques : précachées pour s'ouvrir sans réseau, même jamais visitées
 // (le dossier public/, icônes comprises, est précaché automatiquement par Serwist)
-const appPages = ["/manifest.webmanifest", "/", "/setup", "/game", "/game/results", "/history", "/history/partie", "/statistics", "/settings", "/rules"];
+const appPages = ["/manifest.webmanifest", "/", "/setup", "/game", "/game/results", "/history", "/history/partie", "/statistics", "/settings", "/rules", "/mentions-legales", "/confidentialite", "/conditions"];
 
 const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",

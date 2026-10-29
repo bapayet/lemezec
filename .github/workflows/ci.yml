@@ -1,0 +1,43 @@
+# Contrôles à chaque push et pull request. Aucun secret : tout tourne en mode local, sans toucher à Supabase.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Types
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npx next lint
+      - name: Tests unitaires et règles d'accès Supabase (PGlite)
+        run: npm test
+      - name: Navigateur de test
+        run: npx playwright install --with-deps chromium
+      - name: Parcours de bout en bout + accessibilité
+        run: npx playwright test --project=mobile --project=desktop
+      - name: Hors ligne sur compilation de production
+        run: npm run test:offline
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-playwright
+          path: |
+            e2e-report
+            test-results
+          retention-days: 7

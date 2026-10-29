@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { BookOpen, Database, Moon, RefreshCw, ShieldCheck, Trash, Trash2, Volume2 } from "lucide-react";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -106,6 +107,11 @@ export default function SettingsPage() {
         <footer className="grid gap-1 pb-4 text-center text-xs text-text-muted">
           <p>Lemezec 2.0</p>
           <p>Définitions issues du Wiktionnaire, sous licence CC BY-SA 4.0.</p>
+          <nav aria-label="Pages légales" className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm">
+            <Link href="/mentions-legales" className="underline underline-offset-2 hover:text-accent">Mentions légales</Link>
+            <Link href="/confidentialite" className="underline underline-offset-2 hover:text-accent">Confidentialité</Link>
+            <Link href="/conditions" className="underline underline-offset-2 hover:text-accent">Conditions</Link>
+          </nav>
         </footer>
       </div>
     </>

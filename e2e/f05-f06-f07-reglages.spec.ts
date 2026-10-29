@@ -92,3 +92,21 @@ test.describe("F07 tout effacer", () => {
     await expect(page.getByText("Ont déjà joué ici")).toHaveCount(0);
   });
 });
+
+test.describe("F08 pages légales", () => {
+  test("F08-H1 accessibles depuis les Réglages, sous-traitants listés, accessibles au lecteur d'écran", async ({ page, axe }) => {
+    await ready(page, "/settings");
+    await page.getByRole("navigation", { name: "Pages légales" }).getByRole("link", { name: "Confidentialité" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Confidentialité" })).toBeVisible();
+    for (const processor of ["Supabase Inc.", "Vercel Inc."]) await expect(page.getByText(processor).first()).toBeVisible();
+    await expect(page.getByText(/aucun cookie publicitaire/)).toBeVisible();
+    await axe(page, "confidentialité");
+    await page.getByRole("link", { name: "Mentions légales" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Mentions légales" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Creative Commons BY-SA 4.0" })).toBeVisible();
+    await axe(page, "mentions légales");
+    await page.getByRole("link", { name: "Conditions d'utilisation" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Conditions d'utilisation" })).toBeVisible();
+    await axe(page, "conditions");
+  });
+});

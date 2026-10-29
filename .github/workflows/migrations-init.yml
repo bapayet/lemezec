@@ -1,0 +1,29 @@
+# À LANCER UNE SEULE FOIS (Actions → « Migrations : marquer l'existant » → Run workflow).
+# Les 3 premières migrations ont été appliquées à la main dans le SQL Editor : on les inscrit dans
+# l'historique de Supabase pour que `db push` ne tente pas de les rejouer.
+name: "Migrations : marquer l'existant"
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmer:
+        description: "Tape OUI : les 3 migrations initiales sont déjà appliquées sur la production"
+        required: true
+
+jobs:
+  marquer:
+    if: ${{ github.event.inputs.confirmer == 'OUI' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      - run: supabase migration repair --status applied 20261028000000 20261028000100 20261028000200 --db-url "$SUPABASE_DB_URL"
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      - run: supabase migration list --db-url "$SUPABASE_DB_URL"
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
