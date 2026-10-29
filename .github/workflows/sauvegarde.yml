@@ -1,0 +1,35 @@
+# Sauvegarde hebdomadaire de la base de production (le plan gratuit de Supabase n'en fait pas).
+# Le dump est rangé dans les artefacts privés du dépôt, gardés 90 jours.
+# Contenu : schéma + données (mots, avis anonymes, signalements). Aucun nom ni e-mail de joueur n'existe en base ;
+# seule l'adresse de l'admin figure dans auth.users, qui n'est PAS exportée (schéma public uniquement).
+name: Sauvegarde
+
+on:
+  schedule:
+    - cron: "30 4 * * 1" # chaque lundi, 4 h 30 UTC
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.120.0
+      - name: Schéma et données (schéma public)
+        run: |
+          supabase db dump --db-url "$SUPABASE_DB_URL" --schema public -f schema.sql
+          supabase db dump --db-url "$SUPABASE_DB_URL" --schema public --data-only -f donnees.sql
+          ls -la schema.sql donnees.sql
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sauvegarde-${{ github.run_number }}
+          path: |
+            schema.sql
+            donnees.sql
+          retention-days: 90
