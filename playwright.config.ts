@@ -7,6 +7,7 @@ const PORT = 3100;
 // e2e/global-setup.ts vérifie ce point avant le moindre test.
 export default defineConfig({
   testDir: "./e2e",
+  testIgnore: /\.prod\.spec\.ts$/, // hors-ligne : voir playwright.prod.config.ts
   globalSetup: "./e2e/global-setup.ts",
   fullyParallel: false,
   workers: 1,

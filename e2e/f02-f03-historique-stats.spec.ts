@@ -30,7 +30,7 @@ test.describe("F02 historique", () => {
     await expect(row).toContainText("Ben · 2 mots");
     await axe(page, "S03 rempli");
     await row.click();
-    await expect(page).toHaveURL(/\/history\/[0-9a-f-]{36}$/);
+    await expect(page).toHaveURL(/\/history\/partie\?id=[0-9a-f-]{36}$/);
     await expect(page.getByRole("heading", { name: "Ben gagne !" })).toBeVisible();
     await expect(page.getByText("Trouvé par Ben · lu par Ana")).toBeVisible();
     await expect(page.getByText("Introuvable", { exact: true })).toBeVisible();
@@ -59,7 +59,7 @@ test.describe("F02 historique", () => {
   });
 
   test("F02-N2 détail d'une partie supprimée ou inconnue", async ({ page }) => {
-    await page.goto("/history/00000000-0000-4000-8000-000000000000");
+    await page.goto("/history/partie?id=00000000-0000-4000-8000-000000000000");
     await expect(page.getByRole("heading", { name: "Partie introuvable" })).toBeVisible();
   });
 });

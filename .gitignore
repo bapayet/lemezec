@@ -47,3 +47,10 @@ next-env.d.ts
 /.next-e2e/
 /e2e-report/
 /test-results/
+
+# service worker généré par Serwist à la compilation
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+/public/swe-worker-*.js.map
+/.next-prod/

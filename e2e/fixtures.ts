@@ -4,15 +4,19 @@ import { test as base, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { storeCount } from "./helpers";
 
-type Fixtures = { guard: { errors: string[] }; axe: (page: Page, label: string) => Promise<void> };
+type Fixtures = { guard: { errors: string[]; offline: boolean }; axe: (page: Page, label: string) => Promise<void> };
 
 export const test = base.extend<Fixtures>({
   guard: [
     async ({ page }, use) => {
-      const errors: string[] = [];
+      const state = { errors: [] as string[], offline: false };
+      const errors = state.errors;
       page.on("console", (m) => {
         if (m.type() !== "error") return;
         const t = m.text();
+        // pendant une coupure voulue : requêtes en échec, et préchargement des pages liées que Next.js
+        // abandonne de lui-même (« Falling back to browser navigation »), sans effet visible
+        if (state.offline && /net::ERR_FAILED|Failed to fetch RSC payload [\s\S]*Falling back to browser navigation/.test(t)) return;
         // bruit du serveur de dev (rechargement à chaud), pas l'app
         if (/webpack-hmr|Fast Refresh/.test(t)) return;
         // hors ligne simulé : les requêtes échouent, c'est attendu
@@ -25,7 +29,7 @@ export const test = base.extend<Fixtures>({
         errors.push(`exception : ${e.message}`);
       });
       page.on("response", (r) => { if (r.status() >= 500) errors.push(`${r.status()} sur ${r.url()}`); });
-      await use({ errors });
+      await use(state);
       expect(errors, "erreurs de console ou réponses 5xx").toEqual([]);
     },
     { auto: true },

@@ -59,7 +59,7 @@ export default function HistoryPage() {
               return (
                 <li key={game.id}>
                   <Link
-                    href={ongoing ? "/game" : `/history/${game.id}`}
+                    href={ongoing ? "/game" : `/history/partie?id=${game.id}`}
                     className="flex items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3.5 hover:bg-surface-muted"
                   >
                     <span className="grid min-w-0 flex-1 gap-0.5">

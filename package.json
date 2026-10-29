@@ -14,10 +14,12 @@
     "db:import:dry": "node scripts/import-words.mjs --dry-run",
     "seed": "node scripts/build-seed.mjs",
     "db:check": "node --env-file=.env.local scripts/check-supabase.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:offline": "playwright test -c playwright.prod.config.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
+    "@serwist/next": "^9.5.13",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
     "dexie": "^4.0.11",
@@ -43,6 +45,7 @@
     "eslint": "^9",
     "eslint-config-next": "^15.5.28",
     "postcss": "^8",
+    "serwist": "^9.5.13",
     "tailwindcss": "^4.1.11",
     "tsx": "^4.19.3",
     "typescript": "^5"
