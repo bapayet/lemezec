@@ -1,0 +1,2 @@
+# Configuration minimale pour la CLI Supabase (migrations et sauvegardes via GitHub Actions).
+project_id = "lemezec"
