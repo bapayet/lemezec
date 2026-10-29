@@ -22,8 +22,10 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "mobile", use: { ...devices["Pixel 7"], browserName: "chromium" }, grepInvert: /@desktop/ },
-    { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }, grep: /@desktop/ },
+    { name: "mobile", use: { ...devices["Pixel 7"], browserName: "chromium" }, grepInvert: /@desktop|@capture/ },
+    { name: "desktop", use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }, grep: /@desktop/, grepInvert: /@capture/ },
+    // captures pour /replica-diff : même viewport que les captures de l'original (375×812, densité 1)
+    { name: "capture", use: { ...devices["Desktop Chrome"], viewport: { width: 375, height: 812 }, deviceScaleFactor: 1, isMobile: false }, grep: /@capture/ },
   ],
   webServer: {
     command: `npx next dev -p ${PORT}`,
