@@ -73,3 +73,15 @@ test.describe("Surveillance", () => {
     expect(await r.json()).toEqual({ ok: true, mode: "local" });
   });
 });
+
+test.describe("En-têtes de sécurité", () => {
+  test("S1 aucune page ne peut être affichée dans le cadre d'un autre site", async ({ request }) => {
+    for (const path of ["/", "/admin/login", "/api/health"]) {
+      const h = (await request.get(path)).headers();
+      expect(h["x-frame-options"], path).toBe("DENY");
+      expect(h["content-security-policy"], path).toContain("frame-ancestors 'none'");
+      expect(h["x-content-type-options"], path).toBe("nosniff");
+      expect(h["x-powered-by"], path).toBeUndefined();
+    }
+  });
+});

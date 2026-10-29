@@ -24,6 +24,26 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   // le bouton « N » des outils de dev recouvre l'onglet Accueil : masqué pendant les tests e2e
   devIndicators: process.env.NEXT_PUBLIC_FORCE_LOCAL === "1" ? false : undefined,
+  poweredByHeader: false,
+  // en-têtes de sécurité sur toutes les réponses (une CSP complète demanderait des nonces pour les scripts
+  // de Next.js : on se limite à frame-ancestors, qui empêche l'affichage de l'app dans le cadre d'un autre site)
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+        ],
+      },
+      // le service worker doit toujours être revérifié, sinon une mise à jour peut tarder
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache" }] },
+    ];
+  },
 };
 
 export default withSerwist(nextConfig);
