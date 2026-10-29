@@ -5,8 +5,8 @@ export const LEGAL = {
   // éditeur : particulier (LCEN art. 6-III-2 : un éditeur non professionnel peut ne publier que ses nom et
   // contact, à condition d'avoir communiqué son adresse à l'hébergeur)
   publisher: {
-    name: "À_COMPLÉTER",
-    email: "À_COMPLÉTER",
+    name: "Baptiste",
+    email: "baptiste.payet@gmail.com",
   },
   updatedAt: "2026-10-29",
   // hébergeurs et sous-traitants (à revérifier sur leurs sites au moment de publier)
