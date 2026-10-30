@@ -15,9 +15,11 @@ export default function HomePage() {
   const wordCount = useLiveQuery(() => db.words.where("status").equals("active").count(), [], undefined);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-app-gradient text-on-gradient">
+    // la marge négative annule la réserve de la barre d'onglets posée par le layout : l'accueil fait
+    // exactement la hauteur de l'écran (sinon 88 px de défilement pour rien et une bande grise en bas)
+    <div className="-mb-[calc(var(--lz-layout-tabbar)+env(safe-area-inset-bottom)+1.5rem)] flex min-h-dvh flex-col bg-app-gradient text-on-gradient">
       <OfflineBanner wordCount={wordCount} />
-      <div className="mx-auto flex w-full max-w-app flex-1 flex-col px-4 pb-24 pt-20">
+      <div className="mx-auto flex w-full max-w-app flex-1 flex-col px-4 pb-[calc(var(--lz-layout-tabbar)+env(safe-area-inset-bottom)+1.5rem)] pt-[min(5rem,10dvh)]">
         <div className="text-center">
           <h1 className="text-display tracking-tight">Lemezec</h1>
           <p className="mx-auto mt-4 max-w-80 text-lg font-normal text-on-gradient-muted">

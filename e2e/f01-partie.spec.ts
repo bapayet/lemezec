@@ -212,6 +212,14 @@ test.describe("F01 jouer une partie", () => {
     await expect(page.getByRole("heading", { name: "Partie introuvable" })).toBeVisible();
   });
 
+  test("F01-E14 accueil à la hauteur de l'écran : aucun défilement pour rien (iPhone)", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 664 });
+    await page.goto("/");
+    await ready(page);
+    const { scroll, inner } = await page.evaluate(() => ({ scroll: document.documentElement.scrollHeight, inner: innerHeight }));
+    expect(scroll).toBe(inner);
+  });
+
   test("F01-E13 @desktop mise en page à 1 440 px : colonne centrée, rien ne déborde", async ({ page }) => {
     await startGame(page, ["Ana", "Ben"]);
     expect(await noHorizontalScroll(page)).toBe(true);

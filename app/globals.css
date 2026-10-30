@@ -10,6 +10,12 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* écrans en dégradé (accueil, partie) : pas de rebond élastique d'iOS qui laisse voir le fond gris */
+html:has(.bg-app-gradient) {
+  overscroll-behavior-y: none;
+  background-color: var(--lz-color-gradient-to);
+}
+
 body {
   background: var(--lz-color-bg);
   color: var(--lz-color-text);
